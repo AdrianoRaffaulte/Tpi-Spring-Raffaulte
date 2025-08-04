@@ -3,6 +3,7 @@ package com.informatorio.info_market.service.producto.impl;
 import com.informatorio.info_market.domain.Producto;
 import com.informatorio.info_market.dto.producto.ProductoCreateDto;
 import com.informatorio.info_market.dto.producto.ProductoDto;
+import com.informatorio.info_market.dto.producto.ProductoMarcaPrecioDto;
 import com.informatorio.info_market.exception.badrequest.StockInsuficienteException;
 import com.informatorio.info_market.exception.notfound.NotFoundException;
 import com.informatorio.info_market.mapper.producto.ProductoCreateMapper;
@@ -10,7 +11,10 @@ import com.informatorio.info_market.mapper.producto.ProductoMapper;
 import com.informatorio.info_market.repository.producto.ProductoRepository;
 import com.informatorio.info_market.service.producto.ProductoService;
 import lombok.AllArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,7 +48,7 @@ public class ProductoServiceImpl implements ProductoService {
             productos = productoRepository.findAllByStockIsGreaterThan(minStock);
         }
         return productos.stream()
-                    .map( producto -> productoMapper.productoToProductoDto(producto))
+                    .map( producto -> productoMapper.toDto(producto))
                     .toList();
     }
 
@@ -52,7 +56,7 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoDto getProductoById(UUID id) {
         Optional<Producto> producto = productoRepository.findById(id);
         if (producto.isPresent()) {
-            return productoMapper.productoToProductoDto(producto.get());
+            return productoMapper.toDto(producto.get());
         }else{
             throw new NotFoundException("No se encontró el producto con ID : " + id);
         }
@@ -75,7 +79,7 @@ public class ProductoServiceImpl implements ProductoService {
         productoToCreate.setFechaDeCreacion(LocalDate.now());
         productoToCreate.setFechaActualizacion(LocalDate.now());
 
-        return productoMapper.productoToProductoDto( productoRepository.save(productoToCreate) ) ;
+        return productoMapper.toDto( productoRepository.save(productoToCreate) ) ;
     }
 
     @Override
@@ -91,7 +95,7 @@ public class ProductoServiceImpl implements ProductoService {
             productoUpdated.setFechaActualizacion(LocalDate.now());
 
             productoRepository.save(productoUpdated);
-            return productoMapper.productoToProductoDto(productoUpdated);
+            return productoMapper.toDto(productoUpdated);
 
         }else{
             throw new NotFoundException("No se encontro el producto con id : " + idProducto);
@@ -119,4 +123,23 @@ public class ProductoServiceImpl implements ProductoService {
 
         throw new NotFoundException("No se encontro el producto con id : " + id);
     }
+    @Override
+        public List<String> obtenerTop10MarcasPorPrecio() {
+        Pageable topTen = PageRequest.of(0, 10);
+        return productoRepository.findTop10MarcasByPrecioDesc(topTen);
+    }
+
+    @Override
+    public List<ProductoMarcaPrecioDto> obtenerTop10ProductosConMarcas() {
+    Pageable topTen = PageRequest.of(0, 10);
+    List<Producto> productos = productoRepository.findTop10ByOrderByPrecioDesc(topTen);
+    
+    return productos.stream().map(p -> ProductoMarcaPrecioDto.builder()
+            .marca(p.getMarca())
+            .nombre(p.getNombre())
+            .precio(p.getPrecio())
+            .build()
+    ).toList();
+}
+
 }

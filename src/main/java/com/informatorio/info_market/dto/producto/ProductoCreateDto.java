@@ -26,6 +26,18 @@ public class ProductoCreateDto {
     @Min(value = 0, message = "Se debe tener un precio minimo de 0")
     private Double precio;
 
+    @NotBlank(message = "La marca no puede estar vacía")
+    private String marca;
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+
     @Min(value = 0, message = "Se debe tener un stock minimo de 0")
     private Integer stock;
 

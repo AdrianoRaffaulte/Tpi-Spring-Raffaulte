@@ -16,6 +16,7 @@ public class ProductoDto {
     private String nombre;
     private String descripcion;
     private Double precio;
+    private String marca;
     private Integer stock;
     private List<CategoriaDto> categorias;
 }

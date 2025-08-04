@@ -27,6 +27,8 @@ public class Producto {
     @Column(nullable = false)
     private String descripcion;
     private double precio;
+    @Column(name = "marca")
+    private String marca;
     private int stock;
     private LocalDate fechaDeCreacion;
     private LocalDate fechaActualizacion;
@@ -36,12 +38,13 @@ public class Producto {
 
     public Producto() {}
 
-    public Producto(UUID id, String nombre, String descripcion, double precio, int stock, LocalDate fechaDeCreacion, LocalDate fechaActualizacion, List<Categoria> categorias) {
+    public Producto(UUID id, String nombre, String descripcion, double precio, int stock, String marca, LocalDate fechaDeCreacion, LocalDate fechaActualizacion, List<Categoria> categorias) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.stock = stock;
+        this.marca = marca;
         this.fechaDeCreacion = fechaDeCreacion;
         this.fechaActualizacion = fechaActualizacion;
         this.categorias = categorias;
@@ -78,6 +81,15 @@ public class Producto {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
 
     public int getStock() {
         return stock;

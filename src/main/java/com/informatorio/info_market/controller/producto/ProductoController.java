@@ -3,6 +3,7 @@ package com.informatorio.info_market.controller.producto;
 
 import com.informatorio.info_market.dto.producto.ProductoCreateDto;
 import com.informatorio.info_market.dto.producto.ProductoDto;
+import com.informatorio.info_market.dto.producto.ProductoMarcaPrecioDto;
 import com.informatorio.info_market.service.producto.ProductoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController //Anotacion a nivel de clase
-@RequestMapping("/api/v1/productos")
+@RequestMapping("/productos")
 public class ProductoController {
 
     @Autowired //Anotacion a nivel de atributo
@@ -68,5 +69,15 @@ public class ProductoController {
         ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/top-marcas")
+    public ResponseEntity<List<String>> obtenerTop10MarcasPorPrecio() {
+        List<String> marcas = productoService.obtenerTop10MarcasPorPrecio();
+        return ResponseEntity.ok(marcas);
+}
+
+    @GetMapping("/top-productos-marcas")
+    public ResponseEntity<List<ProductoMarcaPrecioDto>> getTopProductosMarcas() {
+        return ResponseEntity.ok(productoService.obtenerTop10ProductosConMarcas());
+    }
 
 }
